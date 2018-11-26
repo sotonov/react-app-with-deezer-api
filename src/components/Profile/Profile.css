@@ -1,0 +1,28 @@
+.profile {
+  justify-content: center;
+  color: #fff;
+  margin: 20px auto;
+}
+
+.profile__img {
+  height: 220px;
+  width: 220px;
+  border: 3px solid #fff;
+  border-radius: 150px;
+  object-fit: cover;
+}
+
+.profile__info {
+  margin-left: 10px;
+  text-align: left;
+  display: inline-block;
+  justify-content: center;
+}
+
+.info__name {
+  font-size: 26px;
+}
+
+.info__fans {
+  font-size: 18px;
+}
