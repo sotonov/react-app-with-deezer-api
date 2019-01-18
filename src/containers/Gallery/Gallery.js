@@ -11,7 +11,7 @@ class Gallery extends Component {
     hidden: new Array(this.props.tracks.length).fill(true)
   }
 
-  playStopHandler = (url, play, i) => {
+  handlePlayStop = (url, play, i) => {
     let updatedPlaying = [...this.state.playing];
     const audio = new Audio(url);
     if (!this.state.url) {
@@ -55,9 +55,9 @@ class Gallery extends Component {
     this.state.audio.pause();
   }
 
-  clickHandler = (event, i) => {
+  handleClick = (event, i) => {
     event.preventDefault();
-    this.playStopHandler(this.props.data[i].preview, !this.state.playing[i], i)
+    this.handlePlayStop(this.props.tracks[i].preview, !this.state.playing[i], i)
   }
 
   showPlayStop = (event, i) => {
@@ -81,7 +81,7 @@ class Gallery extends Component {
           <div
             onMouseEnter={e => this.showPlayStop(e, i)}
             onMouseLeave={e => this.hidePlayStop(e, i)}
-            onClick={e => this.clickHandler(e, i)}
+            onClick={e => this.handleClick(e, i)}
             className={this.state.hidden[i] ? "track__playStop track__playStop--hidden" : "track__playStop"}>
             {!this.state.playing[i] ? <Glyphicon glyph='play'/> : <Glyphicon glyph='stop' />}
           </div>

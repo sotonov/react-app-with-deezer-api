@@ -89,7 +89,9 @@ class App extends Component {
         playlists = <Playlists playlists={this.state.playlists} />
       }
       if (this.state.playlists.length) {
-        suggestions = <Suggestions suggestions={this.state.suggestions} clicked={this.handleArtistChange}/>
+        suggestions = <Suggestions
+          suggestions={this.state.suggestions}
+          handleClick={(event, name) => this.handleArtistChange(name)}/>
       }
     }
 

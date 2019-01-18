@@ -5,10 +5,6 @@ import './Suggestions.css';
 const suggestions = (props) => {
   const {suggestions} = props;
 
-  const onClick = (e, name) => {
-    props.clicked(name);
-  }
-
   const suggestionsGallery = suggestions.map(suggestion => {
     return (
       <div key={suggestion.id} className="suggestion_imageElement">
@@ -19,7 +15,7 @@ const suggestions = (props) => {
         />
         <div
           className="imageElement__name"
-          onClick={e => onClick(e, suggestion.name)}
+          onClick={e => props.handleClick(e, suggestion.name)}
           >{suggestion.name}</div>
       </div>
     )
