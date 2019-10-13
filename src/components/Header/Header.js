@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar } from 'react-bootstrap';
 
-const header = (props) => {
+const header = () => {
   return(
     <Navbar>
       <Navbar.Header>

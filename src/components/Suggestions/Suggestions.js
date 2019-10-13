@@ -2,21 +2,20 @@ import React from 'react';
 
 import './Suggestions.css';
 
-const suggestions = (props) => {
-  const {suggestions} = props;
-
+const suggestions = ({ suggestions, handleClick }) => {
   const suggestionsGallery = suggestions.map(suggestion => {
+    const { id, name, picture_medium } = suggestion;
     return (
-      <div key={suggestion.id} className="suggestion_imageElement">
+      <div key={id} className="suggestion_imageElement">
         <img
-          src={suggestion.picture_medium}
-          alt={suggestion.name}
+          src={picture_medium}
+          alt={name}
           className="imageElement__img"
         />
         <div
           className="imageElement__name"
-          onClick={e => props.handleClick(e, suggestion.name)}
-          >{suggestion.name}</div>
+          onClick={e => handleClick(e, name)}
+          >{name}</div>
       </div>
     )
   })

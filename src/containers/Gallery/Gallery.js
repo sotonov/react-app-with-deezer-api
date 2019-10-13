@@ -5,98 +5,89 @@ import { Glyphicon } from 'react-bootstrap';
 
 class Gallery extends Component {
   state = {
-    url: '',
     audio: null,
-    playing: new Array(this.props.tracks.length).fill(false),
-    hidden: new Array(this.props.tracks.length).fill(true)
+    playingId: '',
+    shownId: '',
   }
 
-  handlePlayStop = (url, play, i) => {
-    let updatedPlaying = [...this.state.playing];
-    const audio = new Audio(url);
-    if (!this.state.url) {
-      updatedPlaying[i] = !updatedPlaying[i];
+  handleClick = (event, id) => {
+    const { playingId } = this.state;
+    const { tracks } = this.props;
+    const track = tracks.find(track => id === track.id);
+    const trackUrl = track.preview;
+    const audio = new Audio(trackUrl);
+    if (!playingId) {
       this.setState({
-        playing: updatedPlaying,
-        url,
+        playingId: id,
         audio
-      }, () => this.playAudio(i));
+      }, this.playAudio);
     } else {
       this.stopAudio();
-      if (!play) {
-        updatedPlaying[updatedPlaying.indexOf(true)] = false;
-        this.setState({ playing: updatedPlaying });
-      } else if (url !== this.state.url) {
-        [updatedPlaying[updatedPlaying.indexOf(true)], updatedPlaying[i]] = [false, true];
-        this.setState({ playing: updatedPlaying });
-        this.setState({ url, audio }, () => this.playAudio(i));
+      if (id === playingId) {
+        this.setState({
+          playingId: ''
+        });
       } else {
-        updatedPlaying[i] = true;
-        this.setState({ playing: updatedPlaying });
-        this.setState({ url, audio }, () => this.playAudio(i));
+        this.setState({
+          playingId: id,
+          audio
+         }, this.playAudio)
       }
     }
   }
 
-  playAudio = (i) => {
-    const audio = this.state.audio;
+  playAudio = () => {
+    const { audio } = this.state;
     audio.play();
     audio.onended = () => {
-      let updatedPlaying = [...this.state.playing];
-      updatedPlaying[i] = !updatedPlaying[i];
       this.setState({
-        playing: updatedPlaying,
-        url: ''
+        playingId: '',
       })
     };
   }
 
   stopAudio = () => {
-    this.state.audio.pause();
+    const { audio } = this.state;
+    audio.pause();
+    this.setState({
+      playingId: ''
+    });
   }
 
-  handleClick = (event, i) => {
-    event.preventDefault();
-    this.handlePlayStop(this.props.tracks[i].preview, !this.state.playing[i], i)
-  }
-
-  showPlayStop = (event, i) => {
-    event.preventDefault();
-    let updatedHidden = [...this.state.hidden];
-    updatedHidden[i] = false;
-    this.setState({ hidden: updatedHidden });
-  }
-
-  hidePlayStop = (event, i) => {
-    let updatedHidden = [...this.state.hidden];
-    updatedHidden[i] = true;
-    this.setState({hidden: updatedHidden});
+  togglePlayStop = (event, id = '') => {
+    this.setState({
+      shownId: id
+    });
   }
 
   render () {
-    const {tracks} = this.props;
-    const gallery = tracks.map((track, i) => {
+    const { tracks } = this.props;
+    const { shownId, playingId } = this.state;
+    const gallery = tracks.map(track => {
+      const { id, album, title, title_short } = track;
       return (
-        <div key={track.id} className="track">
+        <div key={id} className="track">
           <div
-            onMouseEnter={e => this.showPlayStop(e, i)}
-            onMouseLeave={e => this.hidePlayStop(e, i)}
-            onClick={e => this.handleClick(e, i)}
-            className={this.state.hidden[i] ? "track__playStop track__playStop--hidden" : "track__playStop"}>
-            {!this.state.playing[i] ? <Glyphicon glyph='play'/> : <Glyphicon glyph='stop' />}
+            onMouseEnter={e => this.togglePlayStop(e, id)}
+            onMouseLeave={this.togglePlayStop}
+            onClick={e => this.handleClick(e, id)}
+            className={id !== shownId ? "track__playStop track__playStop--hidden" : "track__playStop"}>
+            {id !== playingId ? <Glyphicon glyph='play'/> : <Glyphicon glyph='stop' />}
           </div>
           <img
-            src={track.album.cover_medium}
-            alt={track.title_short}
-            className={"track__img"}
+            src={album.cover_medium}
+            alt={title_short}
+            className="track__img"
           />
-          <div className={"track__name"}>{track.title}</div>
+          <div className="track__name">
+            {title}
+          </div>
         </div>
       )
     })
     return (
-      <div className={"gallery"}>
-        <h3 className={"gallery__subtitle"}>Top Songs</h3>
+      <div className="gallery">
+        <h3 className="gallery__subtitle">Top Songs</h3>
         {gallery}
       </div>
     );

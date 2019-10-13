@@ -2,24 +2,23 @@ import React from 'react';
 
 import './Playlists.css';
 
-const playlists = (props) => {
-  const {playlists} = props;
+const playlists = ({ playlists }) => {
   const playlistsGallery = playlists.map(playlist => {
-
+    const { id, link, title, picture_medium } = playlist;
     return (
-        <div key={playlist.id} className="playlist_imageElement">
+        <div key={id} className="playlist_imageElement">
           <img
-            src={playlist.picture_medium}
-            alt={playlist.title}
+            src={picture_medium}
+            alt={title}
             className="imageElement__img"
           />
           <div
             className="imageElement__name"
-            onClick={() => window.open(playlist.link, '_blank')}
-            >{playlist.title}</div>
+            onClick={() => window.open(link, '_blank')}
+            >{title}</div>
         </div>
-      )
-  })
+      );
+  });
 
   return(
     <div className="playlists">

@@ -2,18 +2,18 @@ import React from 'react';
 
 import './Profile.css'
 
-const profile = (props) => {
-  const {artist} = props;
+const profile = ({ artist }) => {
+  const { picture_medium, name, nb_fan } = artist;
   return (
     <div className="profile">
       <img
         className="profile__img"
-        src={artist.picture_medium}
+        src={picture_medium}
         alt='Profile Pic'
       />
       <div className="profile__info">
-        <div className="info__name">{artist.name}</div>
-        <div className="info__fans">{artist.nb_fan} fans</div>
+        <div className="info__name">{name}</div>
+        <div className="info__fans">{nb_fan} fans</div>
       </div>
     </div>
   );
