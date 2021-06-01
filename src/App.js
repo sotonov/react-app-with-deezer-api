@@ -8,7 +8,7 @@ import Profile from './components/Profile/Profile';
 import Gallery from './containers/Gallery/Gallery';
 import Playlists from './components/Playlists/Playlists';
 import Suggestions from './components/Suggestions/Suggestions';
-import { BASE_URL, METHOD, OBJECT, TOP_ARTISTS, PLAYLISTS, RELATED } from './constants/app';
+import { getArtistUrl, getPlaylistsUrl, getRelatedUrl, getTopArtistsUrl } from './utils/urls';
 
 class App extends Component {
   state = {
@@ -22,6 +22,7 @@ class App extends Component {
 
   componentDidMount(){
     const query = localStorage.getItem('artist');
+    console.log(query)
     this.setState({ query }, this.search(query));
   }
 
@@ -29,7 +30,8 @@ class App extends Component {
     localStorage.removeItem('artist');
     localStorage.setItem('artist', artistName);
 
-    fetch(`${BASE_URL}${METHOD}${OBJECT}?q=${artistName}`)
+    console.log(artistName)
+    fetch(getArtistUrl(artistName))
       .then(response => response.json())
       .then(json => {
         const artist = json.data[0];
@@ -37,18 +39,18 @@ class App extends Component {
 
         this.setState({ artist, id }, () => {
           const { id } = this.state;
-          fetch(`${BASE_URL}${OBJECT}/${id}/${TOP_ARTISTS}`)
+          fetch(getTopArtistsUrl(id))
             .then(response => response.json())
             .then(json => this.setState({ tracksArray: json.data }));
 
 
-          fetch(`${BASE_URL}${OBJECT}/${id}/${PLAYLISTS}`)
+          fetch(getPlaylistsUrl(id))
             .then(response => response.json())
             .then(json => json.error ? null : this.setState({ playlistsArray: json.data }))
             .catch(error => console.log(error));
 
 
-          fetch(`${BASE_URL}${OBJECT}/${id}/${RELATED}`)
+          fetch(getRelatedUrl(id))
             .then(response => response.json())
             .then(json => this.setState({suggestionsArray: json.data}));
         });
