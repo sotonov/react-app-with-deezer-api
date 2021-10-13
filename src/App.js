@@ -33,8 +33,8 @@ class App extends Component {
     error: false,
   };
 
-  componentDidMount() {
-    const query = localStorage.getItem("artist");
+  componentDidMount(){
+    const query = localStorage.getItem('artist');
     this.setState({ query }, this.search(query));
   }
 
@@ -86,11 +86,11 @@ class App extends Component {
     });
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = event => {
     event.preventDefault();
     const { query } = this.state;
     this.search(query);
-  };
+  }
 
   render() {
     const {
