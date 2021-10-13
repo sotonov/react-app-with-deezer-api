@@ -22,7 +22,6 @@ class App extends Component {
 
   componentDidMount(){
     const query = localStorage.getItem('artist');
-    console.log(query)
     this.setState({ query }, this.search(query));
   }
 
@@ -66,17 +65,10 @@ class App extends Component {
     this.setState({ query: event.target.value });
   }
 
-  handleClick = event => {
+  handleSubmit = event => {
     event.preventDefault();
     const { query } = this.state;
     this.search(query);
-  }
-
-  handleKeyPress = event => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.search(this.myQuery.props.value);
-    }
   }
 
   render() {
@@ -99,7 +91,7 @@ class App extends Component {
     }
 
     searchInput = (
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <FormGroup>
           <InputGroup>
             <FormControl
@@ -107,12 +99,12 @@ class App extends Component {
               type="text"
               placeholder="Add an Artist"
               onChange={this.handleChange}
-              onKeyPress={this.handleKeyPress}
               value={query}
             />
             <InputGroup.Addon>
               <Glyphicon
                 glyph='search'
+                type="submit"
                 onClick={this.handleClick}
               />
             </InputGroup.Addon>
