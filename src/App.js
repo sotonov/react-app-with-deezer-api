@@ -94,9 +94,9 @@ class App extends Component {
       .catch(() => this.setState({ message: 'danger' }, this.resetArtist));
   };
 
-  handleArtistChange = name => {
+  handleArtistChange = (event, name) => {
     this.setState({ query: name, message: '' }, this.search(name));
-    setTimeout(() => window.scrollTo(0, 0), 2000);
+    setTimeout(() => window.scrollTo(0, 0), 1000);
   };
 
   handleChange = event => {
@@ -112,6 +112,8 @@ class App extends Component {
     const { query } = this.state;
     if (query.length) {
       this.search(query);
+    } else {
+      this.resetArtist();
     }
   };
 
