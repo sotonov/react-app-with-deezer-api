@@ -8,7 +8,7 @@ class Gallery extends Component {
     audio: null,
     playingId: '',
     shownId: '',
-  }
+  };
 
   handleClick = (event, id) => {
     const { playingId } = this.state;
@@ -17,24 +17,30 @@ class Gallery extends Component {
     const trackUrl = track.preview;
     const audio = new Audio(trackUrl);
     if (!playingId) {
-      this.setState({
-        playingId: id,
-        audio
-      }, this.playAudio);
+      this.setState(
+        {
+          playingId: id,
+          audio,
+        },
+        this.playAudio
+      );
     } else {
       this.stopAudio();
       if (id === playingId) {
         this.setState({
-          playingId: ''
+          playingId: '',
         });
       } else {
-        this.setState({
-          playingId: id,
-          audio
-         }, this.playAudio)
+        this.setState(
+          {
+            playingId: id,
+            audio,
+          },
+          this.playAudio
+        );
       }
     }
-  }
+  };
 
   playAudio = () => {
     const { audio } = this.state;
@@ -42,56 +48,63 @@ class Gallery extends Component {
     audio.onended = () => {
       this.setState({
         playingId: '',
-      })
+      });
     };
-  }
+  };
 
   stopAudio = () => {
     const { audio } = this.state;
     audio.pause();
     this.setState({
-      playingId: ''
+      playingId: '',
     });
-  }
+  };
 
   togglePlayStop = (event, id = '') => {
     this.setState({
-      shownId: id
+      shownId: id,
     });
-  }
+  };
 
-  render () {
+  render() {
     const { tracks } = this.props;
     const { shownId, playingId } = this.state;
     const gallery = tracks.map(track => {
-      const { id, album, title, title_short } = track;
+      const { id, album: { cover_medium: albumCover}, title, title_short: shortTitle } = track;
       return (
         <div key={id} className="track">
           <div
             onMouseEnter={e => this.togglePlayStop(e, id)}
             onMouseLeave={this.togglePlayStop}
             onClick={e => this.handleClick(e, id)}
-            className={id !== shownId ? "track__playStop track__playStop--hidden" : "track__playStop"}>
-            {id !== playingId ? <Glyphicon glyph='play'/> : <Glyphicon glyph='stop' />}
+            className={
+              id !== shownId
+                ? 'track__playStop track__playStop--hidden'
+                : 'track__playStop'
+            }
+          >
+            {id !== playingId ? (
+              <Glyphicon glyph="play" />
+            ) : (
+              <Glyphicon glyph="stop" />
+            )}
           </div>
           <img
-            src={album.cover_medium}
-            alt={title_short}
+            src={albumCover}
+            alt={shortTitle}
             className="track__img"
           />
-          <div className="track__name">
-            {title}
-          </div>
+          <div className="track__name">{title}</div>
         </div>
-      )
-    })
+      );
+    });
     return (
       <div className="gallery">
         <h3 className="gallery__subtitle">Top Songs</h3>
         {gallery}
       </div>
     );
-  };
+  }
 }
 
 export default Gallery;

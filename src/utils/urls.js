@@ -1,11 +1,15 @@
 const baseUrl = 'https://api.deezer.com/';
 const method = 'search/';
 const object = 'artist';
-const topArtists = 'top?limit=10';
-const playlists = 'playlists?limit=3';
-const related = 'related?limit=5';
+const topArtists = 'top';
+const playlists = 'playlists';
+const related = 'related';
 
-export const getArtistUrl = artist => `${baseUrl}${method}${object}?q=${artist}`;
-export const getTopArtistsUrl = id => `${baseUrl}${object}/${id}/${topArtists}`;
-export const getPlaylistsUrl = id => `${baseUrl}${object}/${id}/${playlists}`;
-export const getRelatedUrl = id => `${baseUrl}${object}/${id}/${related}`;
+export const getArtistUrl = artist =>
+  `${baseUrl}${method}${object}?q=${artist}&limit=1`;
+export const getTopArtistsUrl = ({ id, limit }) =>
+  `${baseUrl}${object}/${id}/${topArtists}?limit=${limit}`;
+export const getPlaylistsUrl = ({ id, limit }) =>
+  `${baseUrl}${object}/${id}/${playlists}?limit=${limit}`;
+export const getRelatedUrl = ({ id, limit }) =>
+  `${baseUrl}${object}/${id}/${related}?limit=${limit}`;

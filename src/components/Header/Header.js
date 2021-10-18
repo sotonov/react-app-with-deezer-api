@@ -2,15 +2,13 @@ import React from 'react';
 import { Navbar } from 'react-bootstrap';
 
 const header = () => {
-  return(
+  return (
     <Navbar>
       <Navbar.Header>
-        <Navbar.Brand>
-          Music Master from App
-        </Navbar.Brand>
+        <Navbar.Brand>Deezer API app</Navbar.Brand>
       </Navbar.Header>
     </Navbar>
   );
-}
+};
 
 export default header;

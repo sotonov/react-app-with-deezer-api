@@ -24,9 +24,9 @@
 
 .imageElement__name {
   position: absolute;
-  left: 0;
+  left: 2%;
   bottom: 10px;
-  width: 100%;
+  width: 96%;
   background-color: #000;
   color: #fff;
   opacity: 0.75;
