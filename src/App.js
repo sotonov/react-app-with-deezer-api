@@ -1,139 +1,140 @@
-import React, { Component } from "react";
-import { Grid, Row, Col } from "react-bootstrap";
+import React, { Component } from 'react';
+import { Grid, Row, Col } from 'react-bootstrap';
 import {
-  Alert,
   Form,
   FormGroup,
   InputGroup,
   FormControl,
   Glyphicon,
-} from "react-bootstrap";
+} from 'react-bootstrap';
 
-import "./App.css";
-import Header from "./components/Header/Header";
-import Profile from "./components/Profile/Profile";
-import Gallery from "./containers/Gallery/Gallery";
-import Playlists from "./components/Playlists/Playlists";
-import Suggestions from "./components/Suggestions/Suggestions";
+import './App.css';
+import Header from './components/Header/Header';
+import Artist from './components/Artist/Artist';
+import NoArtist from './components/NoArtist/NoArtist';
 import {
   getArtistUrl,
   getPlaylistsUrl,
   getRelatedUrl,
   getTopArtistsUrl,
-} from "./utils/urls";
+} from './utils/urls';
 
 class App extends Component {
   state = {
-    query: "",
-    id: "",
+    query: '',
     artist: null,
-    tracksArray: [],
-    playlistsArray: [],
-    suggestionsArray: [],
-    error: false,
+    tracks: [],
+    playlists: [],
+    suggestions: [],
+    message: '',
   };
 
-  componentDidMount(){
+  componentDidMount() {
     const query = localStorage.getItem('artist');
-    this.setState({ query }, this.search(query));
+    if (query) {
+      this.setState({ query }, this.search(query));
+    }
   }
 
-  search = (artistName) => {
-    localStorage.removeItem("artist");
-    localStorage.setItem("artist", artistName);
+  search = artistName => {
+    localStorage.removeItem('artist');
+    localStorage.setItem('artist', artistName);
 
     fetch(getArtistUrl(artistName))
-      .then((response) => response.json())
-      .then((json) => {
+      .then(response => response.json())
+      .then(json => {
         if (json.total) {
-          const artist = json.data[0];
-          const { id } = artist;
+          const [artist] = json.data;
 
-          this.setState({ artist, id }, () => {
-            const { id } = this.state;
-            fetch(getTopArtistsUrl(id))
-              .then((response) => response.json())
-              .then((json) => this.setState({ tracksArray: json.data }));
+          this.setState({ artist }, () => {
+            const { id } = this.state.artist;
 
-            fetch(getPlaylistsUrl(id))
-              .then((response) => response.json())
-              .then((json) =>
-                json.error ? null : this.setState({ playlistsArray: json.data })
+            fetch(getTopArtistsUrl({ id, limit: 10 }))
+              .then(response => response.json())
+              .then(json =>
+                json.error
+                  ? this.setState({ tracks: [] })
+                  : this.setState({ tracks: json.data })
               )
-              .catch((error) => this.setState(error));
+              .catch(() =>
+                this.setState({ message: 'danger' }, this.resetArtist)
+              );
 
-            fetch(getRelatedUrl(id))
-              .then((response) => response.json())
-              .then((json) => this.setState({ suggestionsArray: json.data }));
+            fetch(getPlaylistsUrl({ id, limit: 3 }))
+              .then(response => response.json())
+              .then(json =>
+                json.error
+                  ? this.setState({ playlists: [] })
+                  : this.setState({ playlists: json.data })
+              )
+              .catch(() =>
+                this.setState({ message: 'danger' }, this.resetArtist)
+              );
+
+            fetch(getRelatedUrl({ id, limit: 5 }))
+              .then(response => response.json())
+              .then(json =>
+                json.error
+                  ? this.setState({ suggestions: [] })
+                  : this.setState({ suggestions: json.data })
+              )
+              .catch(error => {
+                this.setState({ message: 'danger' }, this.resetArtist);
+              });
           });
         } else {
-          console.log("here");
-          this.setState({ error: true, artist: null });
+          this.setState(
+            {
+              message: 'info',
+            },
+            this.resetArtist
+          );
         }
-      });
+      })
+      .catch(() => this.setState({ message: 'danger' }, this.resetArtist));
   };
 
-  handleArtistChange = (name) => {
-    this.setState({ query: name }, this.search(name));
+  handleArtistChange = name => {
+    this.setState({ query: name, message: '' }, this.search(name));
     setTimeout(() => window.scrollTo(0, 0), 2000);
   };
 
-  handleChange = (event) => {
+  handleChange = event => {
     const { value } = event.target;
     this.setState({
       query: value,
-      error: false,
+      message: '',
     });
   };
 
   handleSubmit = event => {
     event.preventDefault();
     const { query } = this.state;
-    this.search(query);
-  }
+    if (query.length) {
+      this.search(query);
+    }
+  };
+
+  resetArtist = () => {
+    this.setState({
+      artist: null,
+      tracks: [],
+      playlists: [],
+      suggestions: [],
+    });
+  };
 
   render() {
-    const {
-      artist,
-      playlistsArray,
-      query,
-      suggestionsArray,
-      tracksArray,
-      error,
-    } = this.state;
-    let profile, gallery, playlists, suggestions, searchInput, info;
+    const { query, artist, playlists, suggestions, tracks, message } =
+      this.state;
 
-    if (artist) {
-      profile = <Profile artist={artist} />;
-      if (tracksArray.length) {
-        gallery = <Gallery tracks={tracksArray} />;
-      }
-      if (playlistsArray.length) {
-        playlists = <Playlists playlists={playlistsArray} />;
-      }
-      if (suggestionsArray.length) {
-        suggestions = (
-          <Suggestions
-            suggestions={suggestionsArray}
-            handleClick={(e, name) => this.handleArtistChange(name)}
-          />
-        );
-      }
-    } else if (error) {
-      info = (
-        <Alert bsStyle="info">
-          {`There is no data for ${query}. Search for something else...`}
-        </Alert>
-      );
-    }
-
-    searchInput = (
+    const searchInput = (
       <Form onSubmit={this.handleSubmit}>
         <FormGroup>
           <InputGroup>
             <FormControl
               type="text"
-              placeholder="Add an Artist"
+              placeholder="Find an Artist"
               onChange={this.handleChange}
               value={query}
             />
@@ -148,6 +149,7 @@ class App extends Component {
         </FormGroup>
       </Form>
     );
+
     return (
       <div className="app">
         <Header />
@@ -156,11 +158,16 @@ class App extends Component {
             <Col xs={0} sm={0} md={1} lg={2} />
             <Col xs={12} sm={12} md={10} lg={8}>
               {searchInput}
-              {profile}
-              {gallery}
-              {playlists}
-              {suggestions}
-              {info}
+              {artist && !message ? (
+                <Artist
+                  artist={artist}
+                  tracks={tracks}
+                  playlists={playlists}
+                  suggestions={suggestions}
+                  handleArtistChange={this.handleArtistChange}
+                />
+              ) : null}
+              {message ? <NoArtist bsStyle={message} query={query} /> : null}
             </Col>
           </Row>
         </Grid>
