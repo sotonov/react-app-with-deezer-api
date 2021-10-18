@@ -4,10 +4,10 @@ import './Playlists.css';
 
 const playlists = ({ playlists }) => {
   const playlistsGallery = playlists.map(playlist => {
-    const { id, link, title, picture_medium } = playlist;
+    const { id, link, title, picture_medium: picture } = playlist;
     return (
       <div key={id} className="playlist_imageElement">
-        <img src={picture_medium} alt={title} className="imageElement__img" />
+        <img src={picture} alt={title} className="imageElement__img" />
         <div
           className="imageElement__name"
           onClick={() => window.open(link, '_blank')}
